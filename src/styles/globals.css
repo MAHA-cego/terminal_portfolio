@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+:root {
+  --background-mono: #000000;
+  --background-green: #000000;
+  --background-amber: #0d0d00;
+  --foreground-mono: #ffffff;
+  --foreground-green: #00ff55;
+  --foreground-amber: #ffb000;
+
+  --font-DOS: "DOS", monospace;
+}
+
+@font-face {
+  font-family: "DOS";
+  src: url("/fonts/PerfectDOSVGA437Win.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme inline {
+  --color-background: var(--background-mono);
+  --color-foreground: var(--foreground-mono);
+  --font: var(--font-DOS);
+}
+
+body {
+  background: var(--background-mono);
+  color: var(--foreground-mono);
+  font-family: var(--font);
+}
+
+.cursor-blink {
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
