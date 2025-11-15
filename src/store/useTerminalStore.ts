@@ -17,8 +17,12 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
     addEntry: (entry: TerminalEntry) => set(s => ({history: [...s.history, entry]})),
 
     submitCommand: (cmd: string) => {
-        const output = commandParser(cmd);
-        get().addEntry({ type: "input", value: cmd});
-        get().addEntry({ type: "output", value: output });
+      const output = commandParser(cmd);
+      get().addEntry({ type: "input", value: cmd});
+      if (output === "__CLEAR__") {
+        set(() => ({ history: [] }));
+        return;
+      }
+      get().addEntry({ type: "output", value: output });
     }
 }))

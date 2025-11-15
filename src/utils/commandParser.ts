@@ -1,12 +1,24 @@
 import { commands } from "@/utils/commands";
 
-export function commandParser(input: string): string{
-    const [name, ...args] = input.trim().split(/\s+/);
+export function commandParser(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
 
-    const cmd = commands[name as keyof typeof commands];
-    if (!cmd) return `
-  Unknown command: ${name}\n  Type "help" for available commands.
+  const [name, ...args] = trimmed.split(/\s+/);
+  const fn = (commands as any)[name];
+
+  if (!fn) {
+    return `
+  Unknown command: ${name}
+  Type "help" for available commands.
+
 `;
+  }
 
-    return cmd(args);
+  try {
+    return fn(args);
+  } catch (err) {
+    console.error("Command error", err);
+    return "Command failed.";
+  }
 }

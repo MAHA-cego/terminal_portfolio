@@ -1,3 +1,3 @@
-export default function clear(args?: string[]) {
-  return '';
+export default function clear(): string {
+  return "__CLEAR__";
 }

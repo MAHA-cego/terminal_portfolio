@@ -1,8 +1,14 @@
 'use client'
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
-export default function Input({ onSubmit }: { onSubmit: (command: string) => void }) {
+export default function Input({
+  onSubmit,
+  placeholder,
+}: {
+  onSubmit: (cmd: string) => void;
+  placeholder?: string;
+}) {
   const [input, setInput] = useState<string>("");
   const [focused, setFocused] = useState<boolean>(false);
 
@@ -57,7 +63,8 @@ export default function Input({ onSubmit }: { onSubmit: (command: string) => voi
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      onSubmit(input);
+      const trimmed = input.replace(/\n+$/g, "");
+      onSubmit(trimmed);
       setInput("");
       return
     }

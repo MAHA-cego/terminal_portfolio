@@ -1,13 +1,20 @@
+import React from "react";
+
 export default function Initialization() {
   return (
-        <p>
-          Loading portfolio data... OK<br />
-          Initializing display... OK<br />
-          Preparing input... OK<br /><br />
-          C.G. Workstation v1.0<br />
-          © 2025<br /><br />
-          System initialization complete.<br />
-          Type 'help' for available commands.<br /><br />
-        </p>
+         <div className="mb-4 whitespace-pre-wrap">
+       Loading portfolio data... OK
+      {"\n"}Initializing display... OK
+      {"\n"}Preparing input... OK
+
+      {"\n"}
+      {"\n"}C.G. Workstation v1.0
+      {"\n"}© 2025
+
+      {"\n"}
+      {"\n"}System initialization complete.
+      {"\n"}Type 'help' for available commands.
+      {"\n"}
+    </div>
   );
 }
