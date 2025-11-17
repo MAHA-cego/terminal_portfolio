@@ -13,7 +13,7 @@ export default function Output({ history }: { history: string[] }) {
             el.scrollTop = el.scrollHeight;
         });
     }, [history]);
-
+    
     return (
         <div ref={containerRef}
         className="whitespace-pre-wrap h-full min-h-0 overflow-y-auto"

@@ -4,8 +4,8 @@ import Terminal from "@/components/Terminal/Terminal";
 
 export default function Home() {
   return (
-    <div>
-      <main className="flex flex-col text-md p-2 leading-5 tracking-[0.08em]">
+    <div className="h-screen w-full flex">
+      <main className="flex flex-col h-full w-full min-h-0 p-2">
         <Terminal />
       </main>
     </div>

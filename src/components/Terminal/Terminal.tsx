@@ -30,7 +30,7 @@ export default function Terminal() {
 
   return (
     <>
-        <main className="flex flex-col text-md pd-2 leading-5 tracking-[0.08em]">
+        <main className="flex flex-col text-md leading-5 tracking-[0.08em]">
             <Initialization />
             <div className="flex-1 min-h-0 overflow-hidden">
                 {bootComplete && <Output history={history} />}
