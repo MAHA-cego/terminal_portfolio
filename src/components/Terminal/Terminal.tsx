@@ -32,7 +32,9 @@ export default function Terminal() {
     <>
         <main className="flex flex-col text-md pd-2 leading-5 tracking-[0.08em]">
             <Initialization />
-            {bootComplete && <Output history={history} />}
+            <div className="flex-1 min-h-0 overflow-hidden">
+                {bootComplete && <Output history={history} />}
+            </div>
             <Input onSubmit={handleSubmit} placeholder={bootComplete ? "" : "Booting..."} />
         </main>
     </>

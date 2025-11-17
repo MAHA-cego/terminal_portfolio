@@ -1,20 +1,21 @@
 import React from "react";
+import Typewriter from "@/components/Terminal/Typewriter";
 
 export default function Initialization() {
+  const bootText = `
+Loading portfolio data... OK
+Initializing display... OK
+Preparing input... OK
+
+C.G. Workstation v1.0
+© 2025
+
+System initialization complete.
+Type 'help' for available commands.
+`;
   return (
-         <div className="mb-4 whitespace-pre-wrap">
-       Loading portfolio data... OK
-      {"\n"}Initializing display... OK
-      {"\n"}Preparing input... OK
-
-      {"\n"}
-      {"\n"}C.G. Workstation v1.0
-      {"\n"}© 2025
-
-      {"\n"}
-      {"\n"}System initialization complete.
-      {"\n"}Type 'help' for available commands.
-      {"\n"}
+    <div className="mb-4">
+      <Typewriter text={bootText} speed={0.015} />
     </div>
   );
 }

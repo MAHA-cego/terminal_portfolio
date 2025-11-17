@@ -1,22 +1,31 @@
+"use client";
+
 import React, { useEffect, useRef } from "react";
+import Typewriter from "@/components/Terminal/Typewriter";
 
 export default function Output({ history }: { history: string[] }) {
-    const ref = useRef<HTMLDivElement | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        if (!ref.current) return;
-        ref.current.scrollTop = ref.current.scrollHeight;
+         const el = containerRef.current;
+         if (!el) return;
+         requestAnimationFrame(() => {
+            el.scrollTop = el.scrollHeight;
+        });
     }, [history]);
+
     return (
-        <div ref={ref}
-        className="whitespace-pre-wrap mt-2 mb-2 max-h-[50vh] overflow-y-auto"
+        <div ref={containerRef}
+        className="whitespace-pre-wrap h-full min-h-0 overflow-y-auto"
         aria-live="polite">
-            {history.map((line, i) => {
-                const isMultiline = line.includes('\n');
-                return (
-                    <p key={i} className={isMultiline ? 'mb-2' : ''}>{line}</p>
-                );
-            })}
+            {history.map((line, i) => (
+        <Typewriter
+          key={i}
+          text={line}
+          speed={0.01}
+          className="mb-1"
+        />
+      ))}
         </div>
     );
 }

@@ -26,6 +26,12 @@
   --font: var(--font-DOS);
 }
 
+html,
+body,
+:root {
+  height: 100%;
+}
+
 body {
   background: var(--background-mono);
   color: var(--foreground-mono);
