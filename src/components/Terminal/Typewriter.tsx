@@ -9,12 +9,14 @@ export default function Typewriter({
     delay = 0,
     className = "",
     onComplete,
+    scrollContainer,
 }: {
     text: string;
     speed?: number;
     delay?: number;
     className?: string;
     onComplete?: () => void;
+    scrollContainer?: React.RefObject<HTMLDivElement | null>;
 }) {
     const ref = useRef<HTMLDivElement>(null);
 
@@ -38,6 +40,11 @@ export default function Typewriter({
                     .slice(0, n)
                     .join("")
                     .replace(/\n/g, "<br>");
+
+                    if (scrollContainer?.current) {
+                        const sc = scrollContainer.current;
+                        sc.scrollTop = sc.scrollHeight;
+                    }
                 },
                 onComplete,
             });
