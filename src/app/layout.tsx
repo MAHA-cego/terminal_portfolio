@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "styles/globals.css";
 
-const DOS = ({
+const DOS = {
   variable: "--font-DOS",
   subsets: ["latin"],
-});
+};
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,11 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${DOS.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className={`${DOS.variable} antialiased`}>{children}</body>
     </html>
   );
 }

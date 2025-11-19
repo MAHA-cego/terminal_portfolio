@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { commandParser } from '@/utils/commandParser';
+import { create } from "zustand";
+import { commandParser } from "@/utils/commandParser";
 
 export interface TerminalEntry {
   type: "input" | "output";
@@ -13,16 +13,17 @@ export interface TerminalState {
 }
 
 export const useTerminalStore = create<TerminalState>((set, get) => ({
-    history: [],
-    addEntry: (entry: TerminalEntry) => set(s => ({history: [...s.history, entry]})),
+  history: [],
+  addEntry: (entry: TerminalEntry) =>
+    set((s) => ({ history: [...s.history, entry] })),
 
-    submitCommand: (cmd: string) => {
-      const output = commandParser(cmd);
-      get().addEntry({ type: "input", value: cmd});
-      if (output === "__CLEAR__") {
-        set(() => ({ history: [] }));
-        return;
-      }
-      get().addEntry({ type: "output", value: output });
+  submitCommand: (cmd: string) => {
+    const output = commandParser(cmd);
+    get().addEntry({ type: "input", value: cmd });
+    if (output === "__CLEAR__") {
+      set(() => ({ history: [] }));
+      return;
     }
-}))
+    get().addEntry({ type: "output", value: output });
+  },
+}));

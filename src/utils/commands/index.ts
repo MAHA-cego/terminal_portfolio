@@ -1,7 +1,7 @@
-import help from './help';
-import ls from './ls';
-import open from './open';
-import clear from './clear';
+import help from "./help";
+import ls from "./ls";
+import open from "./open";
+import clear from "./clear";
 
 export const commands = {
   help,

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Terminal from "@/components/Terminal/Terminal";
 
