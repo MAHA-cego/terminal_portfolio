@@ -59,3 +59,13 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 24px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: white;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: white;
+}
