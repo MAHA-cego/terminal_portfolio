@@ -106,7 +106,7 @@ export default function WindowFrame({
   return (
     <div
       ref={windowRef}
-      className="absolute flex flex-col border-2 border-white bg-black select-none"
+      className="absolute flex flex-col border-2 border-white bg-black select-none p-px"
       style={{
         left: pos.x,
         top: pos.y,
@@ -132,7 +132,7 @@ export default function WindowFrame({
 
       <div
         onMouseDown={(e) => startResize(e, "corner")}
-        className="absolute right-0 bottom-0 w-3 h-3 bg-black cursor-nwse-resize"
+        className="absolute right-0 bottom-0 w-3 h-3 cursor-nwse-resize"
       />
     </div>
   );

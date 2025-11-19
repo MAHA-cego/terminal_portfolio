@@ -13,7 +13,7 @@ export default function WindowTopBar({
 }) {
   return (
     <div
-      className="h-6 bg-black text-white flex items-center cursor-move select-none gap-px"
+      className="h-6 bg-black text-white flex items-center cursor-move select-none gap-px mb-px"
       onMouseDown={onMouseDown}
     >
       <span className="border-2 border-white h-6 w-full pl-4 text-sm">
