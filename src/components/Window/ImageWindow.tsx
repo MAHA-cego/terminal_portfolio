@@ -53,7 +53,7 @@ export default function ImageWindow({
     >
       <WindowScrollArea className="overflow-auto w-full h-full">
         <div className="relative flex-1 w-full h-full min-h-0">
-          <Image src={src} alt={title} fill className="object-cover"></Image>
+          <Image src={src} alt={title} fill className="object-cover border-2 border-white"></Image>
         </div>
       </WindowScrollArea>
     </WindowFrame>

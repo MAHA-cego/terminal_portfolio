@@ -8,9 +8,7 @@ export default function WindowScrollArea({
   className?: string;
 }) {
   return (
-    <div
-      className={`flex-1 min-h-0 overflow-auto custom-scrollbar bg-black border-2 border-white ${className}`}
-    >
+    <div className={`flex-1 min-h-0 overflow-auto custom-scrollbar bg-black ${className}`}>
       {children}
     </div>
   );

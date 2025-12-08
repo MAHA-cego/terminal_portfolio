@@ -23,6 +23,7 @@ export default function VideoPlayer({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (!controlsRef.current) return;
@@ -33,6 +34,8 @@ export default function VideoPlayer({
 
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [hoverProgress, setHoverProgress] = useState<number | null>(null);
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -67,8 +70,36 @@ export default function VideoPlayer({
 
   const onTimeUpdate = () => {
     const v = videoRef.current;
-    if (!v) return;
+    if (!v || isDragging) return;
     setProgress((v.currentTime / v.duration) * 100);
+  };
+
+  const updateProgressFromEvent = (e: MouseEvent | React.MouseEvent) => {
+    const bar = document.getElementById("progress-bar");
+    if (!bar) return;
+    const rect = bar.getBoundingClientRect();
+    let newProgress = ((e.clientX - rect.left) / rect.width) * 100;
+    newProgress = Math.max(0, Math.min(100, newProgress));
+    const v = videoRef.current;
+    if (v) v.currentTime = (newProgress / 100) * v.duration;
+    setProgress(newProgress);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    updateProgressFromEvent(e);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    updateProgressFromEvent(e);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
   };
 
   const onChangeProgress = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,9 +109,37 @@ export default function VideoPlayer({
     v.currentTime = (p / 100) * v.duration;
   };
 
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    const handleEnded = () => {
+      setPaused(true);
+      setProgress(0);
+    };
+
+    v.addEventListener("ended", handleEnded);
+
+    return () => {
+      v.removeEventListener("ended", handleEnded);
+    };
+  }, []);
+
+  function formatTime(seconds: number) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  }
+
+  const displayProgress = isDragging && hoverProgress !== null ? hoverProgress : progress;
+  // Current time is on the left (at ~2% offset); if progress bar covers it, use black text (inverted)
+  const currentTimeColor = displayProgress >= 2 ? "black" : "white";
+  // Duration is on the right (at ~98% offset); if progress bar covers it, use black text (inverted)
+  const durationColor = displayProgress >= 98 ? "black" : "white";
+
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex-1 bg-black relative">
+      <div className="flex-1 bg-black relative border-2 border-white mb-px">
         <video
           ref={videoRef}
           src={src}
@@ -91,32 +150,70 @@ export default function VideoPlayer({
       </div>
       <div
         ref={controlsRef}
-        className="h-6 flex items-center bg-neutral-900 text-white border-t-2 border-white"
+        className="h-6 flex items-center bg-neutral-900 text-white border-2 border-white"
       >
-        <button className="border-r-2 border-white w-12  min-w-12" onClick={togglePlay}>
+        <button
+          className="flex items-center justify-center border-r-2 border-white w-12  min-w-12"
+          onClick={togglePlay}
+        >
           {paused ? (
-            <img className="h-6 w-6" src={playIcon} alt="Play" />
+            <img className="h-6 w-6 " src={playIcon} alt="Play" />
           ) : (
             <img className="h-6 w-6" src={pauseIcon} alt="Pause" />
           )}
         </button>
-        <button className="border-r-2 border-white w-6" onClick={stop}>
+        <button
+          className="flex items-center justify-center border-r-2 border-white w-6"
+          onClick={stop}
+        >
           <img className="h-6 w-6  min-w-6" src={stopIcon} alt="Stop" />
         </button>
-        <button className="border-r-2 border-white w-6  min-w-6" onClick={() => seek(-5)}>
+        <button
+          className="flex items-center justify-center border-r-2 border-white w-6  min-w-6"
+          onClick={() => seek(-5)}
+        >
           <img className="h-6 w-6  min-w-6 rotate-180" src={fwdIcon} alt="Backward 5s" />
         </button>
-        <input
-          type="range"
-          className="flex-1 h-6 appearance-none range-none focus:outline-none"
-          value={progress}
-          onChange={onChangeProgress}
-        />
-        <button className="border-l-2 border-white w-6" onClick={() => seek(5)}>
+        <div
+          ref={progressBarRef}
+          id="progress-bar"
+          className="flex-1 h-6 relative cursor-pointer"
+          onMouseDown={handleMouseDown}
+          onMouseMove={(e) => isDragging && updateProgressFromEvent(e)}
+        >
+          <p
+            className="absolute top-[50%] translate-y-[-50%] left-2 text-xs select-none"
+            style={{
+              color: currentTimeColor,
+            }}
+          >
+            {formatTime(
+              isDragging
+                ? (displayProgress / 100) * (videoRef.current?.duration || 0)
+                : videoRef.current?.currentTime || 0,
+            )}
+          </p>
+          <div className="h-6 bg-white" style={{ width: `${progress}%` }}></div>
+          <p
+            className="absolute top-[50%] translate-y-[-50%] right-2 text-xs select-none"
+            style={{
+              color: durationColor,
+            }}
+          >
+            {formatTime(videoRef.current?.duration || 0)}
+          </p>
+        </div>
+        <button
+          className="flex items-center justify-center border-l-2 border-white w-6"
+          onClick={() => seek(5)}
+        >
           <img className="h-6 w-6 min-w-6" src={fwdIcon} alt="Forward 5s" />
         </button>
-        <button className="border-l-2 border-white w-6  min-w-6" onClick={goFullScreen}>
-          <img className="h-[22px] w-[22px" src={fScreenIcon} alt="Full Screen" />
+        <button
+          className="flex items-center justify-center border-l-2 border-white w-6  min-w-6"
+          onClick={goFullScreen}
+        >
+          <img className="h-[22px] w-[22px]" src={fScreenIcon} alt="Full Screen" />
         </button>
       </div>
     </div>

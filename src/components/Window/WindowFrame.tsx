@@ -34,8 +34,6 @@ export default function WindowFrame({
     height: initialHeight,
   });
 
-  // vertical decoration accounts for `border-2` (2px top+bottom) and
-  // `p-px` (1px top+bottom) used on the root element -> total 6px
   const VERTICAL_DECORATION = 6;
 
   useLayoutEffect(() => {
@@ -46,19 +44,9 @@ export default function WindowFrame({
     }
   }, []);
 
-  // Track whether the user has manually resized the window. If they have,
-  // avoid overwriting their size when props change.
   const hasUserResized = useRef(false);
-
-  // If the parent later provides a new initial size (for example after
-  // measuring controls or chrome), update our internal size unless the
-  // user already resized the window.
   useEffect(() => {
     if (hasUserResized.current) return;
-    // account for the window chrome/border/padding declared in Tailwind:
-    // `border-2` (2px top + 2px bottom) and `p-px` (1px top + 1px bottom)
-    // -> total vertical decoration = 6px. Without this, the outer box
-    // height will end up a few pixels short of the inner content.
     const VERTICAL_DECORATION = 6;
     setSize({
       width: initialWidth,
@@ -111,8 +99,6 @@ export default function WindowFrame({
       w: size.width,
       h: size.height,
     };
-
-    // mark that the user is about to resize so we don't stomp their choice
     hasUserResized.current = true;
 
     window.addEventListener("mousemove", (ev) => onResize(ev, direction));
@@ -134,7 +120,6 @@ export default function WindowFrame({
         const videoHeight = Math.round(newWidth / aspectRatio);
         newHeight = videoHeight + extraHeight + chromeHeight + VERTICAL_DECORATION;
       } else if (direction === "bottom") {
-        // compute the content (video) height from the overall window height
         const startingContentHeight =
           resizeData.current.h - (extraHeight + chromeHeight + VERTICAL_DECORATION);
         const videoHeight = Math.max(100, startingContentHeight + dy);
@@ -144,6 +129,15 @@ export default function WindowFrame({
         newWidth = Math.max(200, resizeData.current.w + dx);
         const videoHeight = Math.round(newWidth / aspectRatio);
         newHeight = videoHeight + extraHeight + chromeHeight + VERTICAL_DECORATION;
+      }
+    } else {
+      if (direction === "right") {
+        newWidth = Math.max(200, resizeData.current.w + dx);
+      } else if (direction === "bottom") {
+        newHeight = Math.max(100, resizeData.current.h + dy);
+      } else if (direction === "corner") {
+        newWidth = Math.max(200, resizeData.current.w + dx);
+        newHeight = Math.max(100, resizeData.current.h + dy);
       }
     }
 
