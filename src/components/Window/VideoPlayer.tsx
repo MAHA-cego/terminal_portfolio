@@ -10,6 +10,7 @@ export default function VideoPlayer({
   stopIcon,
   fwdIcon,
   fScreenIcon,
+  fScreenCloseIcon,
   onControlsHeight,
 }: {
   src: string;
@@ -19,11 +20,13 @@ export default function VideoPlayer({
   stopIcon: string;
   fwdIcon: string;
   fScreenIcon: string;
+  fScreenCloseIcon: string;
   onControlsHeight?: (height: number) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (!controlsRef.current) return;
@@ -36,6 +39,7 @@ export default function VideoPlayer({
   const [paused, setPaused] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [hoverProgress, setHoverProgress] = useState<number | null>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -65,7 +69,11 @@ export default function VideoPlayer({
   };
 
   const goFullScreen = () => {
-    videoRef.current?.requestFullscreen();
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
   };
 
   const onTimeUpdate = () => {
@@ -125,6 +133,16 @@ export default function VideoPlayer({
     };
   }, []);
 
+  useEffect(() => {
+    const handleFsChange = () => {
+      const fsEl = document.fullscreenElement;
+      setIsFullScreen(fsEl === containerRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
   function formatTime(seconds: number) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -132,13 +150,11 @@ export default function VideoPlayer({
   }
 
   const displayProgress = isDragging && hoverProgress !== null ? hoverProgress : progress;
-  // Current time is on the left (at ~2% offset); if progress bar covers it, use black text (inverted)
   const currentTimeColor = displayProgress >= 2 ? "black" : "white";
-  // Duration is on the right (at ~98% offset); if progress bar covers it, use black text (inverted)
   const durationColor = displayProgress >= 98 ? "black" : "white";
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-full" ref={containerRef}>
       <div className="flex-1 bg-black relative border-2 border-white mb-px">
         <video
           ref={videoRef}
@@ -153,7 +169,7 @@ export default function VideoPlayer({
         className="h-6 flex items-center bg-neutral-900 text-white border-2 border-white"
       >
         <button
-          className="flex items-center justify-center border-r-2 border-white w-12  min-w-12"
+          className="flex items-center justify-center border-r-2 border-white w-12  min-w-12 cursor-pointer"
           onClick={togglePlay}
         >
           {paused ? (
@@ -163,13 +179,13 @@ export default function VideoPlayer({
           )}
         </button>
         <button
-          className="flex items-center justify-center border-r-2 border-white w-6"
+          className="flex items-center justify-center border-r-2 border-white w-6 cursor-pointer"
           onClick={stop}
         >
           <img className="h-6 w-6  min-w-6" src={stopIcon} alt="Stop" />
         </button>
         <button
-          className="flex items-center justify-center border-r-2 border-white w-6  min-w-6"
+          className="flex items-center justify-center border-r-2 border-white w-6  min-w-6 cursor-pointer"
           onClick={() => seek(-5)}
         >
           <img className="h-6 w-6  min-w-6 rotate-180" src={fwdIcon} alt="Backward 5s" />
@@ -204,16 +220,20 @@ export default function VideoPlayer({
           </p>
         </div>
         <button
-          className="flex items-center justify-center border-l-2 border-white w-6"
+          className="flex items-center justify-center border-l-2 border-white w-6 cursor-pointer"
           onClick={() => seek(5)}
         >
           <img className="h-6 w-6 min-w-6" src={fwdIcon} alt="Forward 5s" />
         </button>
         <button
-          className="flex items-center justify-center border-l-2 border-white w-6  min-w-6"
+          className="flex items-center justify-center border-l-2 border-white w-6  min-w-6 cursor-pointer"
           onClick={goFullScreen}
         >
-          <img className="h-[22px] w-[22px]" src={fScreenIcon} alt="Full Screen" />
+          <img
+            className="h-[22px] w-[22px]"
+            src={isFullScreen ? fScreenCloseIcon : fScreenIcon}
+            alt={isFullScreen ? "Exit Full Screen" : "Full Screen"}
+          />
         </button>
       </div>
     </div>

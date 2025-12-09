@@ -71,9 +71,13 @@ export default function WindowFrame({
 
   const onDrag = (e: MouseEvent) => {
     if (!dragData.current) return;
+
+    const newX = e.clientX - dragData.current.offsetX;
+    const newY = e.clientY - dragData.current.offsetY;
+
     setPos({
-      x: e.clientX - dragData.current.offsetX,
-      y: e.clientY - dragData.current.offsetY,
+      x: newX,
+      y: Math.max(newY, 0),
     });
   };
 
@@ -116,7 +120,7 @@ export default function WindowFrame({
 
     if (aspectRatio) {
       if (direction === "right") {
-        newWidth = Math.max(200, resizeData.current.w + dx);
+        newWidth = Math.max(250, resizeData.current.w + dx);
         const videoHeight = Math.round(newWidth / aspectRatio);
         newHeight = videoHeight + extraHeight + chromeHeight + VERTICAL_DECORATION;
       } else if (direction === "bottom") {
@@ -126,7 +130,7 @@ export default function WindowFrame({
         newHeight = videoHeight + extraHeight + chromeHeight + VERTICAL_DECORATION;
         newWidth = Math.round(videoHeight * aspectRatio);
       } else if (direction === "corner") {
-        newWidth = Math.max(200, resizeData.current.w + dx);
+        newWidth = Math.max(250, resizeData.current.w + dx);
         const videoHeight = Math.round(newWidth / aspectRatio);
         newHeight = videoHeight + extraHeight + chromeHeight + VERTICAL_DECORATION;
       }

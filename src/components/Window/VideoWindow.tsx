@@ -22,6 +22,7 @@ export default function VideoWindow({
   const stopIcon = "/icons/stopIcon.png";
   const fwdIcon = "/icons/fwdIcon.png";
   const fScreenIcon = "/icons/fScreenIcon.png";
+  const fScreenCloseIcon = "/icons/fScreenCloseIcon.png";
 
   const [init, setInit] = useState<{ w: number; h: number; ar: number } | null>(null);
 
@@ -70,6 +71,7 @@ export default function VideoWindow({
             stopIcon={stopIcon}
             fwdIcon={fwdIcon}
             fScreenIcon={fScreenIcon}
+            fScreenCloseIcon={fScreenCloseIcon}
             onControlsHeight={setControlsHeight}
           />
         </div>
